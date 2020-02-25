@@ -1,13 +1,11 @@
 links:
 - title: Posts
   url: /
-- title: Personal
-  url: /personal
 - title: Projects
   url: /projects
 - title: About
   url: /about
-- title: Recipes
-  url: /recipes
+- title: Miscellany
+  url: /misc
 - title: Rss
   url: /atom.xml

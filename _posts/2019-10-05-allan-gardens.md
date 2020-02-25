@@ -1,7 +1,7 @@
 ---
 layout: post
 title: A Trip to the Allan Gardens Conservatory
-
+categories: [personal]
 ---
 
 Some images from me and Clemence's trip to the Allan Gardens. Don't really remember why we went
