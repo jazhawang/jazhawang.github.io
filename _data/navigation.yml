@@ -4,8 +4,8 @@ links:
 - title: About
   url: /about
 - title: Pictures
-  url: /data/pictures
+  url: /pictures
 - title: Recipes
-  url: /data/recipes
+  url: /recipes
 - title: Rss
   url: /atom.xml
