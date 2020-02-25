@@ -3,7 +3,9 @@ links:
   url: /
 - title: About
   url: /about
-- title: Search
-  url: /search
+- title: Pictures
+  url: /data/pictures
+- title: Recipes
+  url: /data/recipes
 - title: Rss
   url: /atom.xml
