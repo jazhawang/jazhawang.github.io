@@ -1,3 +1,9 @@
 name: Zhao Wang
 markdown: kramdown
 remote_theme: ronv/sidey
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-sitemap
