@@ -1,12 +1,12 @@
 links:
-- title: Writing
+- title: Posts
   url: /
+- title: Personal
+  url: /personal
 - title: Projects
   url: /projects
 - title: About
   url: /about
-- title: Pictures
-  url: /pictures
 - title: Recipes
   url: /recipes
 - title: Rss
