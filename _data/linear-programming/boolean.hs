@@ -2,7 +2,6 @@ import Numeric.LinearProgramming
 import Data.List.Split (chunksOf)
 import Data.List (transpose)
 
-
 {- Performs sorting via Linear Programming -}
 sortLP :: [Double] -> [Double]
 sortLP arr = case simplex prob constr [] of

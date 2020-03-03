@@ -3,28 +3,35 @@ layout: post
 title: Actually using Linear Programming
 ---
 
-In school, we're taught a lot of different data structures and algorithms to solve different problems. For example, in UofT's introductory algorithms class (CSC373), we're taught about Dynamic Programming, and Greedy algorithms and Hash Maps. Now, if you've recently had any sort of programming interview, you're probably familiar with the above terms, and also a bunch of other popular things like graph algos and whatnot. But not only are you aware of what they are, you've also implemented them before (ok maybe not hash maps, but you've definitely encountered hashing algorithms, like Rabin-Karp). Minus some theorectical stuff, I would say most students (including me) have some sort of hands-on experience with these things.
+Linear Programming is one of those things that are pretty heavily emphasized in school, but which I have no real
+applicable experience with. Weird, considering that a lot of my profs just love Linear Programming. 
 
+In this blog post, I'm going to try actually using Linear Programming for some certain problems. I'm not going to implement Simplex or talk about primal-dual methods. I just going to try to solve some interesting (imho) problems with LP.
 
-However, Linear Programming<LINK> is one of those things that are taught (even lauded) in class as some sort of super powerful method (my prof would go on about how it was one of the strongest things that could be done in P), but that I've personally have no experience working with (beyond pen and paper). I have no idea how Simplex really work (let alone elliptical methods), and have never used a LP solver. 
+I'm gonna be using the Numeric.LinearProgramming from Haskell. I'd like to thing that this has pretty intuitive syntax (minus som Haskell-things)
 
-In this blog post, I'm going to try actually using Linear Programming for some certain problems. I'm not going to implement the actual algorithms, but instead try to solve some interesting (imho) problems with LP.
+For our first problem we'll just try to get the thing going. We have some linear constraints, and we want to maximize/minimize something. 
 
+<data/linear-programming/default.hs>
 
-We're gonna be using the Numeric.LinearProgramming from Haskell. I'd like to thing that this has pretty intuitive syntax (minus som Haskell-things)
+Pretty standard.
 
+Sorting: Weird that we can use linear programming to do something as discrete as sorting an array. The key to the algorithm
+is the Birkhoff-von Neumann theorem, which states that if we are optimizing a doubly stochastic matrix, then our result will be
+a permutation matrix. We just have to figure out a suitable objective to maximize such that the resulting permutation matrix gives
+the sorted order for our input array. The objective function in question is $Maximize v.T * M * a$, where $v = (1,...,n)$, $M$ is the 
+double stochastic matrix in question, and $a$ is the input array.
+An explanation can be found here<Sasho's answer on SO>.
 
-For our first problem we'll just try to get the thing going. We have some linear constraints, and we want to maximize/minimize something.
+<data/linear-programming/sorting.hs>
 
-< get it working>
-
-Sorting: Weird that we can use linear programming to do something as discrete as sorting an array. It's due to some 
-pretty cool theorems<Birkhoff-von Neumann> that we can do this. An explanation can be found here<Sasho's blog>.
-
-Boolean Satisfiability: Also something discrete-ish that can be solved using linear programming. I tried to save this for
+Evaluating Boolean Formula: Also something discrete-ish that can be solved using linear programming. I tried to save this for
 last because pretty much any problem can be stated as a (sufficiently long) boolean formula.
 
-Google Code Jam ...
+<data/linear-programming/boolean.hs>
 
+Some other interesting LP formulations: <LINK>. The polynomial splitting formulation is especially interesting. I also could
+try doing some Max flow / Matching stuff, but I want to save that for later posts.
 
+That rounds out my foray into applied LP. I might post some more interesting reductions in a later post. Of course, using linear programming to solve sorting and boolean evaluation in real code is stupid, but it's very interesting to see that so many discrete-ish problems can be solved using LP.
 
