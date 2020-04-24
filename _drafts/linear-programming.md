@@ -1,12 +1,11 @@
 ---
 layout: post
-title: Actually using Linear Programming
+title: Doing nonlinear-ish things with Linear Programming
 ---
 
 Linear Programming is one of those things that are pretty heavily emphasized in school, but which I have no real
-applicable experience with. Weird, considering that a lot of my profs just love Linear Programming. 
-
-In this blog post, I'm going to try actually using Linear Programming for some certain problems. I'm not going to implement Simplex or talk about primal-dual methods. I just going to try to solve some interesting (imho) problems with LP.
+applicable experience with. In this blog post, I'm going to try actually using Linear Programming for some certain problems. No Simplex or talk about primal-dual methods.
+Just solving some interesting (imho) problems with LP.
 
 I'm gonna be using the Numeric.LinearProgramming from Haskell. I'd like to thing that this has pretty intuitive syntax (minus som Haskell-things)
 
@@ -14,7 +13,7 @@ For our first problem we'll just try to get the thing going. We have some linear
 
 <data/linear-programming/default.hs>
 
-Pretty standard.
+It works!
 
 Sorting: Weird that we can use linear programming to do something as discrete as sorting an array. The key to the algorithm
 is the Birkhoff-von Neumann theorem, which states that if we are optimizing a doubly stochastic matrix, then our result will be
