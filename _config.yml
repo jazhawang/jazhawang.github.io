@@ -7,3 +7,5 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-sitemap
+
+theme: jekyll-theme-cayman
