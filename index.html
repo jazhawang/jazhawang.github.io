@@ -1,12 +1,33 @@
----
-layout: default
-title: Home
----
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+    <title>😷 jazhawang's blog</title>
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
 
-<section class="posts">
+<body>
+
+<h1>YES, I HAVE A WEBSITE.</h1>
+<p>Behold! The second incarnation of my internet-famous landing page! </p>
+
+<h2>Whoami</h2> 
 <ul>
-  {% for post in site.posts %}
-    <li><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%m-%d-%Y" }}</time></li>
-  {% endfor %}
+  <li>Github: <a href="https://github.com/jazhawang">https://github.com/jazhawang</a></li>
+  <li>LinkedIn: <a href="https://linkedin.com/in/zhao-wang-work">https://linkedin.com/in/zhao-wang-work</a></li>
 </ul>
-</section>
+
+
+<h2>About</h2> 
+<p>CS Student @ UofT</p>
+
+<h2>Posts</h2>
+<p>TODO: migrate from old blog</p>
+
+<h2>Galleries</h2>
+<p>TODO: migrate from old blog</p>
+
+</body>
+</html> 
