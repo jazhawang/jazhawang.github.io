@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+    <title>😷 jazhawang's blog</title>
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="../css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="../css/default.css">
+    <link rel="stylesheet" href="../css/prisms.css" />
+</head>
+
+<body>
+    <script src="../prism.js"></script>
+
+<h1>Notes: LP for discrete-ish problems</h1>
+
+<p> 
+Linear Programming is one of those things that are pretty heavily emphasized in school, but which I have no real
+applicable experience with. Yes, I'm sure somewhere out there, max flow-like LP reductions are being used to optimize
+timely delivery or something. However, in this blog post, I'm going to use Linear Programming for some pretty common (some would say banal) problems.
+</p>
+
+<p>I'm gonna be using the Numeric.LinearProgramming from Haskell. I'd like to thing that this has pretty intuitive syntax (minus some Haskell-things) </p>
+
+<p>For our first problem we'll just try to get the thing going. We have some linear constraints, and we want to maximize/minimize something. </p>
+
+<data/linear-programming/default.hs>
+
+<pre><code class="language-haskell">    import Numeric.LinearProgramming
+
+    -- maximize 4x_1 - 3x_2 + 2x_3
+    prob = Maximize [4, -3, 2]
+    
+    constr1 = Sparse [ [2#1, 1#2] :<=: 10
+                     , [1#2, 5#3] :<=: 20
+                     ]
+    
+    main = print $ simplex prob constr1 [] </code></pre>
+
+<pre><code class="language-bash">   $ ghc -O3 default.hs
+   $ ./default
+   >>> Optimal (28.0,[5.0,0.0,4.0])
+</code></pre>
+
+<p>It works! </p>
+
+<p><h2 style="display:inline">Sorting</h2> can also be reduced to Linear Programming. This was pretty cool when I found out about it. The key to the algorithm
+is the Birkhoff-von Neumann Theorem, which states that if we are optimizing a doubly stochastic matrix, then our result will be
+a permutation matrix. We just have to figure out a suitable objective to maximize such that the resulting permutation matrix gives
+the sorted order for our input array. The objective function in question is $Maximize v.T * M * a$, where $v = (1,...,n)$, $M$ is the 
+double stochastic matrix in question, and $a$ is the input array. </p>
+
+<pre><code class="language-haskell">    import Numeric.LinearProgramming
+    import Data.List.Split (chunksOf)
+    import Data.List (transpose)
+    
+    {- Performs sorting via Linear Programming -}
+    sortLP :: [Double] -> [Double]
+    sortLP arr = case simplex prob constr [] of
+        Optimal (_, result) -> toList arr result
+        _                   -> error "Yikes"
+        where prob   = sortingProb arr
+              constr = doublyStochasticConstraints dim
+              dim    = length arr
+    
+    {- Sparse constaints for doubly stochastic matrices -}
+    doublyStochasticConstraints :: Int -> Constraints    
+    doublyStochasticConstraints dim = 
+        Sparse $ map (:==: 1) (mat ++ transpose mat)
+        where mat = chunksOf dim $ map (1.0#) [1..dim*dim]
+    
+    {- The sorting optimization problem  -}
+    sortingProb :: [Double] -> Optimization
+    sortingProb arr = 
+        Maximize [(fromIntegral i) * j | i <- [1..length arr], j <- arr]
+    
+    {- Converts the output of the LP solver (a permutation matrix) to a sorted array.
+       Basically dot product. -}
+    toList :: [Double] -> [Double] -> [Double]
+    toList arr result = dot (chunksOf (length arr) result) arr
+        where dot m x = map (\row -> sum (zipWith (*) x row)) m
+    
+    arr = [35.0, 1.0,22.0, 10.0, 33.0, 2.0, 1.0,3,02,44.4,233.0,65.5]
+    main = print $ sortLP arr </code></pre>
+
+<pre><code class="language-bash">   $ ghc -O3 sorting.hs
+   $ ./sorting
+   >>> [1.0,1.0,2.0,2.0,3.0,10.0,22.0,33.0,35.0,44.4,65.5,233.0]
+</code></pre>
+
+<p><h2 style="display:inline">Evaluating a Boolean Formula:</h2> Also something discrete-ish that can be solved using linear programming. </p>
+
+<p>EDIT (April 5, 2021): for some reason I can't find the code for this...
+If you really need to know this then a quick google search should yield 
+a good SO answer.  </p>
+
+<p>There are many other interesting reductions out there. The polynomial splitting formulation is especially interesting. I also could
+try doing some Max flow / Matching stuff, but I want to save that for later posts. </p>
+
+<p>That rounds out my foray into applied LP. I might post some more interesting reductions in a later post. Of course, using linear programming to solve sorting and boolean evaluation in real code is not a good idea, but it's very interesting to see that so many discrete-ish problems can be solved using LP. </p>
+
+
+<h2><a href="../index.html"> ➡ Main</a></h2>
+<h2><a href="../projects.html"> ➡ Projects/Work</a></h2>
+<h2><a href="../galleries.html"> ➡ Galleries</a></h2>
+
+</body>
+</html> 
