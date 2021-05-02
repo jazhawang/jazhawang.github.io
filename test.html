@@ -45,6 +45,9 @@ function main() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#FFFAF4');
 
+  let mouse = new THREE.Vector2();
+
+
   renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
   /*{
@@ -99,15 +102,6 @@ function main() {
   }
 
   {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-
-    const light = new THREE.AmbientLight(color, intensity);
-    //scene.add(light);
-  }
-
-
-  {
     const skyColor = 0xF1F1FF;
     const groudColor = 0xA98A40;
     const intensity = 1;
@@ -128,6 +122,11 @@ function main() {
     return needResize;
   }
 
+  function onMouseMove( event ) {
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  }
+
 
   function render(time) {
     time *= 0.001;
@@ -141,7 +140,15 @@ function main() {
       //coffeePlane.rotation.y = time;
     }
     if (boat) {
-      boat.position.y = boatOrigPos.y + 0.01*Math.sin(3*time) - 0.275;
+
+      boat.position.y = boatOrigPos.y + 0.01*Math.sin(3*time);
+      let dx = mouse.x*time;
+      let dz = mouse.y*time;
+
+      boat.position.x = boatOrigPos.x + 0.01*dx;
+      boat.position.z = boatOrigPos.z + 0.01*dz;
+
+
     }
     renderer.render(scene, camera);
 
@@ -149,6 +156,7 @@ function main() {
   }
 
   requestAnimationFrame(render);
+  window.addEventListener( 'mousemove', onMouseMove, false );
 }
 
 main();
