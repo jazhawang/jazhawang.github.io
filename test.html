@@ -24,7 +24,6 @@
 
 import * as THREE from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/optimized/three.js';
 import {GLTFLoader} from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/unoptimized/examples/jsm/loaders/GLTFLoader.js';
-//import {FontLoader} from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/unoptimized/examples/jsm/loaders/FontLoader.js';
 
 function main() {
 
@@ -57,16 +56,16 @@ function main() {
         'Welcome\nWelcome',
         {
           font: font,
-          size: 3,
+          size: 2,
           height: 0,
           curveSegments: 8,
         }
       );
-      var textMaterial = new THREE.MeshPhongMaterial( 
-        { color: 0xC97A20, specular: 0xffffff }
+      var textMaterial = new THREE.MeshLambertMaterial( 
+        { color: 0xC97A20, }
       );
       var mesh = new THREE.Mesh( textGeometry, textMaterial );
-      mesh.position.set(-9,9,0);
+      mesh.position.set(-6,9,0);
 
       scene.add( mesh );
       console.log("added");
@@ -85,7 +84,7 @@ function main() {
   const camera = new THREE.OrthographicCamera(-aspect, aspect, aspect/2, -aspect/2, near, far);
   camera.position.set(2, 8, 6);
   camera.lookAt(0,5,0);
-  camera.zoom = 0.12;
+  camera.zoom = 0.15;
 
   scene.background = new THREE.Color('#FFFAF4');
   let mouse = new THREE.Vector2();
