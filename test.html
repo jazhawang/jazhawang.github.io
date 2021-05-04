@@ -170,7 +170,7 @@ function main() {
       // cosine rule
       let theta = Math.acos(boatDirVec.dot(boatInfo.velocity) / (boatInfo.velocity.length()*boatDirVec.length()));
 
-      if (theta > 0.02) { // remove some jitter
+      if (theta > 0.015) { // remove some jitter
         if (bx*boatInfo.velocity.y - by*boatInfo.velocity.x < 0) {
           theta = 2*Math.PI - theta;
         }
