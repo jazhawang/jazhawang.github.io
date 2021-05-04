@@ -74,7 +74,7 @@ function main() {
       return lines;
     }
 
-  let coffeePlane, boat, boatOrigPos;
+  let coffeePlane, boat, boatInfo;
   const loader = new GLTFLoader();
   loader.load(
     './assets/coffeecup.glb',
@@ -84,7 +84,12 @@ function main() {
       console.log(dumpObject(root).join('\n'));
       coffeePlane = root.getObjectByName('coffee');
       boat = root.getObjectByName('boat');
-      boatOrigPos = {...boat.position};
+      boatInfo = {
+        origPos: {...boat.position},
+        velocity: new THREE.Vector2(0.0, 0.0),
+        offset: new THREE.Vector2(0.0, 0.0),
+        tRot: boat.rotation.y,
+      };
     }
   );
 
@@ -123,8 +128,8 @@ function main() {
   }
 
   function onMouseMove( event ) {
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    mouse.x = event.clientX - window.innerWidth/2.0;
+    mouse.y = event.clientY - window.innerHeight/2.0;
   }
 
 
@@ -141,14 +146,39 @@ function main() {
     }
     if (boat) {
 
-      boat.position.y = boatOrigPos.y + 0.01*Math.sin(3*time);
-      let dx = mouse.x*time;
-      let dz = mouse.y*time;
+      boatInfo.velocity.add(mouse.clampScalar(-0.001, 0.001));
+      boatInfo.velocity.clampLength(0, 0.1);
 
-      boat.position.x = boatOrigPos.x + 0.01*dx;
-      boat.position.z = boatOrigPos.z + 0.01*dz;
+      let dx = boatInfo.velocity.x*time;
+      let dy = boatInfo.velocity.y*time;
+      let d = new THREE.Vector2(dx, dy);
 
+      d.clampLength(0, 0.0015);
+      boatInfo.offset.add(d);
 
+      boatInfo.offset.clampLength(0, 1.5);
+      boat.position.x = boatInfo.origPos.x + boatInfo.offset.x;
+      boat.position.z = boatInfo.origPos.z + boatInfo.offset.y;
+
+      boat.position.y = boatInfo.origPos.y + 0.01*Math.sin(3*time);
+
+      // calculate the current boat direction unit vector
+      let gamma = boatInfo.tRot;
+      let by = Math.cos(gamma); // weird
+      let bx = Math.sin(gamma);
+      let boatDirVec = new THREE.Vector2(bx,by);
+      // cosine rule
+      let theta = Math.acos(boatDirVec.dot(boatInfo.velocity) / (boatInfo.velocity.length()*boatDirVec.length()));
+
+      if (theta > 0.02) { // remove some jitter
+        if (bx*boatInfo.velocity.y - by*boatInfo.velocity.x < 0) {
+          theta = 2*Math.PI - theta;
+        }
+        boatInfo.tRot +=  0.01 * (theta-Math.PI/2.0);
+        boat.rotation.y = boatInfo.tRot - Math.PI/2.0;
+      }
+
+      
     }
     renderer.render(scene, camera);
 
