@@ -12,6 +12,8 @@
             background-color: #FFFAF4; 
         }
     </style>
+
+  
 </head>
 
 <body>
@@ -21,58 +23,12 @@
 <script type="module">
 
 import * as THREE from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/optimized/three.js';
-import {OrbitControls} from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/unoptimized/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/unoptimized/examples/jsm/loaders/GLTFLoader.js';
+//import {FontLoader} from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/unoptimized/examples/jsm/loaders/FontLoader.js';
 
 function main() {
 
-  const canvas = document.querySelector('#c');
-  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
-
-  const fov = 45;
-  const aspect = 2;  // the canvas default
-  const near = 0.1;
-  const far = 100;
-
-  const camera = new THREE.OrthographicCamera(-aspect, aspect, aspect/2, -aspect/2, near, far);
-  camera.position.set(2, 8, 5);
-  camera.zoom = 0.15;
-
-  const controls = new OrbitControls(camera, canvas);
-  controls.target.set(0, 5, 0);
-  controls.update();
-
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#FFFAF4');
-
-  let mouse = new THREE.Vector2();
-
-
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-  /*{
-    const sphereRadius = 0.1;
-    const sphereWidthDivisions = 32;
-    const sphereHeightDivisions = 16;
-    const sphereGeo = new THREE.SphereGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
-    const sphereMat = new THREE.MeshPhongMaterial({color: '#CA8'});
-    const mesh = new THREE.Mesh(sphereGeo, sphereMat);
-    
-    mesh.position.set(-3, 2, 0);
-    scene.add(mesh);
-  }*/
-
-  function dumpObject(obj, lines = [], isLast = true, prefix = '') {
-      const localPrefix = isLast ? '└─' : '├─';
-      lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
-      const newPrefix = prefix + (isLast ? '  ' : '│ ');
-      const lastNdx = obj.children.length - 1;
-      obj.children.forEach((child, ndx) => {
-        const isLast = ndx === lastNdx;
-        dumpObject(child, lines, isLast, newPrefix);
-      });
-      return lines;
-    }
 
   let coffeePlane, boat, boatInfo;
   const loader = new GLTFLoader();
@@ -81,9 +37,9 @@ function main() {
     function (gltf) {
       const root = gltf.scene;
       scene.add(root);
-      console.log(dumpObject(root).join('\n'));
       coffeePlane = root.getObjectByName('coffee');
       boat = root.getObjectByName('boat');
+      root.position.y -= 1.0;
       boatInfo = {
         origPos: {...boat.position},
         velocity: new THREE.Vector2(0.0, 0.0),
@@ -92,6 +48,48 @@ function main() {
       };
     }
   );
+
+  const fontLoader = new THREE.FontLoader();
+  const font = fontLoader.load(
+    './assets/fonts/serat.json',
+    function (font) {
+      const textGeometry = new THREE.TextGeometry(
+        'Welcome\nWelcome',
+        {
+          font: font,
+          size: 3,
+          height: 0,
+          curveSegments: 8,
+        }
+      );
+      var textMaterial = new THREE.MeshPhongMaterial( 
+        { color: 0xC97A20, specular: 0xffffff }
+      );
+      var mesh = new THREE.Mesh( textGeometry, textMaterial );
+      mesh.position.set(-9,9,0);
+
+      scene.add( mesh );
+      console.log("added");
+
+  });
+
+
+  const canvas = document.querySelector('#c');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  const fov = 45;
+  const aspect = 2;
+  const near = 0.1;
+  const far = 100;
+
+  // why do we need to divide?
+  const camera = new THREE.OrthographicCamera(-aspect, aspect, aspect/2, -aspect/2, near, far);
+  camera.position.set(2, 8, 6);
+  camera.lookAt(0,5,0);
+  camera.zoom = 0.12;
+
+  scene.background = new THREE.Color('#FFFAF4');
+  let mouse = new THREE.Vector2();
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   {
     const color = 0xB97A20;
@@ -163,8 +161,9 @@ function main() {
       boat.position.y = boatInfo.origPos.y + 0.01*Math.sin(3*time);
 
       // calculate the current boat direction unit vector
+      // hacky - fix this
       let gamma = boatInfo.tRot;
-      let by = Math.cos(gamma); // weird
+      let by = Math.cos(gamma); // why
       let bx = Math.sin(gamma);
       let boatDirVec = new THREE.Vector2(bx,by);
       // cosine rule
