@@ -12,6 +12,13 @@
             background-color: #FFFAF4; 
         } 
         div {text-align: center;}
+        ul {
+          display: table;
+          margin: 0 auto;
+        }
+        li {
+          text-align: left;
+        }
     </style>
 
   
@@ -29,9 +36,15 @@
     <li>LinkedIn: <a href="https://linkedin.com/in/zhao-wang-work">https://linkedin.com/in/zhao-wang-work</a></li>
   </ul>
 
-  <h1><a href="projects.html"> ➡ Projects/Work</a></h1>
-  <h1><a href="galleries.html"> ➡ Galleries</a></h1>
-  <h1><a href="test.html"> ➡ 3d test</a></h1>
+  <ul>
+    <h1>
+      <li><a href="projects.html"> Projects/Work</a></li>
+    </h1>
+    <h1>
+      <li><a href="galleries.html"> Galleries</a></li>
+    </h1>
+  </ul>
+  
 </div>
 
 <script type="module">
@@ -194,7 +207,7 @@ function main() {
   }
 
   requestAnimationFrame(render);
-  window.addEventListener( 'mousemove', onMouseMove, false );
+//  window.addEventListener( 'mousemove', onMouseMove, false );
 }
 
 main();
