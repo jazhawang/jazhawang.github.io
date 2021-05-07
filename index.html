@@ -6,25 +6,199 @@
     <!-- styles -->
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
     <link rel="stylesheet" type="text/css" href="css/default.css">
+    <style>
+        body { 
+            margin: 0;
+            background-color: #FFFAF4; 
+        } 
+        div {text-align: center;}
+    </style>
+
+  
 </head>
 
 <body>
 
-<h1>YES, I HAVE A WEBSITE.</h1>
-<p>Behold! The nth incarnation of my personal landing page! </p>
-<p>Have WebGL enabled on your browser? Try the <a href="deluxe/experience.html"><i>Deluxe Experience</i></a>.</p>
+<canvas id="c"></canvas>
 
-<h2>Whoami</h2> 
-<p>Computer Science student at The University of Toronto.</p>
-<ul>
-  
-  <li>Github: <a href="https://github.com/jazhawang">https://github.com/jazhawang</a></li>
-  <li>LinkedIn: <a href="https://linkedin.com/in/zhao-wang-work">https://linkedin.com/in/zhao-wang-work</a></li>
-</ul>
+<div>
+  <h1>Whoami</h1> 
+  <h4>Computer Science student at The University of Toronto.</h4>
+  <ul>
+    <li>Github: <a href="https://github.com/jazhawang">https://github.com/jazhawang</a></li>
+    <li>LinkedIn: <a href="https://linkedin.com/in/zhao-wang-work">https://linkedin.com/in/zhao-wang-work</a></li>
+  </ul>
 
-<h2><a href="projects.html"> ➡ Projects/Work</a></h2>
-<h2><a href="galleries.html"> ➡ Galleries</a></h2>
-<h2><a href="test.html"> ➡ 3d test</a></h2>
+  <h1><a href="projects.html"> ➡ Projects/Work</a></h1>
+  <h1><a href="galleries.html"> ➡ Galleries</a></h1>
+  <h1><a href="test.html"> ➡ 3d test</a></h1>
+</div>
+
+<script type="module">
+
+import * as THREE from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/optimized/three.js';
+import {GLTFLoader} from 'https://cdn.skypack.dev/pin/three@v0.128.0-qS9Si1DbCh3Y4U3kxP8d/mode=imports,min/unoptimized/examples/jsm/loaders/GLTFLoader.js';
+
+function main() {
+
+  const scene = new THREE.Scene();
+  const canvas = document.querySelector('#c');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  const near = 0.1;
+  const far = 100;
+
+  const camera = new THREE.OrthographicCamera(-2, 2, 1, -1, near, far);
+
+  camera.position.set(2, 8, 6);
+  camera.lookAt(0,5,0);
+  camera.zoom = 0.15;
+
+  scene.background = new THREE.Color('#FFFAF4');
+  //let mouse = new THREE.Vector2(); TODO mouse click on 3d elements
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const fragmentShader = `
+  #include <common>
+
+  uniform vec3 iResolution;
+  uniform float iTime;
+
+  void mainImage( out vec4 fragColor, in vec2 fragCoord )
+  {
+    vec2 uv = fragCoord/iResolution.xy*16.;
+
+    for (float i = 1.; i < 16.; i++) {
+      uv.x += sin(iTime*0.10)*(1.25/i)*sin(i * uv.y + iTime * 0.25);
+      uv.y += cos(iTime*0.10)*(2.00/i)*cos(i * uv.x + iTime * 0.15); 
+    }
+
+    float r = abs(sin(uv.y+1.5))+0.40;
+    float g = abs(sin(uv.x+2.0))-0.30;
+    float b = abs(sin(uv.x+4.0))+0.10;   
+
+    vec3 col = vec3(r,g,b); 
+    normalize(col);
+    col += vec3(0.1, 0.1, 0.2);
+    fragColor = vec4(col, 1.0);
+  }
+
+  void main() {
+    mainImage(gl_FragColor, gl_FragCoord.xy);
+  }
+  `;
+
+  const uniforms = {
+    iTime: { value: 0 },
+    iResolution:  { value: new THREE.Vector3() },
+  };
+  const material = new THREE.ShaderMaterial({
+    fragmentShader,
+    uniforms,
+  });
+
+  let cup;
+  let cups = [];
+  const loader = new GLTFLoader();
+  loader.load(
+    './assets/simple.glb',
+    function (gltf) {
+      const root = gltf.scene;
+      cup = root.getObjectByName('cup');
+      for (let i = 0; i < 3; i++) {
+        let cup_clone = cup.clone(true);
+        cup_clone.scale.set(0.6,0.6,0.6);
+        cup_clone.position.set(-10,3*i+1,-2);
+        cups.push(cup_clone);
+        scene.add(cup_clone);
+      }
+
+      for (let i = 0; i < 3; i++) {
+        let cup_clone = cup.clone(true);
+        cup_clone.scale.set(0.6,0.6,0.6);
+        cup_clone.position.set(9,3*i+1,-2);
+        cups.push(cup_clone);
+        scene.add(cup_clone);
+      }
+    }
+  );
+
+  const fontLoader = new THREE.FontLoader();
+  const font = fontLoader.load(
+    './assets/fonts/serat.json',
+    function (font) {
+      const textGeometry = new THREE.TextGeometry(
+        'Welcome\nWelcome',
+        {
+          font: font,
+          size: 2.5,
+          height: 0.1,
+          curveSegments: 8,
+        }
+      );
+      var mesh = new THREE.Mesh( textGeometry, material);
+      mesh.position.set(-6.5,7,2);
+      scene.add( mesh );
+  });
+
+
+  {
+    const color = 0xB97A20;
+    const intensity = 0.15;
+
+    let light, i, x,y,z;
+    light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(1,1,2);
+
+    light.target.position.set(0, 0, 0);
+    scene.add(light);
+  }
+
+  {
+    const skyColor = 0xF1F1FF;
+    const groudColor = 0xA98A40;
+    const intensity = 1;
+
+    const light = new THREE.HemisphereLight(skyColor, groudColor, intensity);
+    scene.add(light);
+  }
+
+
+  function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+    return needResize;
+  }
+
+
+  function render(time) {
+    time *= 0.001;
+    if (resizeRendererToDisplaySize(renderer)) {
+      const canvas = renderer.domElement;
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
+    }
+    uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
+    uniforms.iTime.value = time;
+
+    for (let i = 0; i < cups.length; i++) {
+      cups[i].rotation.y = i + time;
+    }
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+  window.addEventListener( 'mousemove', onMouseMove, false );
+}
+
+main();
+</script>
 
 </body>
 </html> 
