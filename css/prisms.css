@@ -33,13 +33,13 @@ https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javasc
  pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
  code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
      text-shadow: none;
-     background: #b3d4fc;
+     background: #fff6eb;
  }
  
  pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
  code[class*="language-"]::selection, code[class*="language-"] ::selection {
      text-shadow: none;
-     background: #b3d4fc;
+     background: #fff6eb;
  }
  
  @media print {
@@ -58,7 +58,7 @@ https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javasc
  
  :not(pre) > code[class*="language-"],
  pre[class*="language-"] {
-     background: #f5f2f0;
+     background: #fff6eb;
  }
  
  /* Inline code */
