@@ -60,14 +60,14 @@
 		blockquote{}
 		code{}
 		img{}
-		a{color: #af5f1f}
+		a{color: #306674}
 		em{}
 		strong{}
 		pre{}
 	
 	/* HEADINGS */
-		h1{color: #af5f1f; font-size: 32px;}
-		h2{color: #af5f1f; font-size: 28px;}
+		h1{color: #306674; font-size: 32px;}
+		h2{color: #306674; font-size: 28px;}
 		h3{}
 		h4{}
 		h5{}
@@ -105,3 +105,15 @@
 			height: 100%;
 			display: block;
 		  }
+
+		   /* Set additional styling options for the columns*/
+		   .column {
+			float: left;
+			width: 50%;
+			}
+		
+			.row:after {
+			content: "";
+			display: table;
+			clear: both;
+			}
